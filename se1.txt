@@ -1,0 +1,9 @@
+﻿Top of Form
+
+
+Course Contents Course Code: CSC291 Course Title: Software Engineering I Credit Hours: 3(3,0) Corequisite(s): Prerequisite(s): 
+Course Learning Outcomes / Course Objectives : CLO-1 Explain the concept of software engineering along with its processes and deliverables. Understanding CLO-2 Identify functional and non-functional requirements for a medium sized software system. Analyzing CLO-3 Construct appropriate design models for the structure and behavior of a medium sized software system. Applying CLO-4 Apply software testing and quality assurance techniques to medium sized software. Applying CLO-5 Demonstrate software project management skills and maintenance process. Applying 
+Syllabus / Theory Course Outline : Unit Topic 1. Software Engineering: Overview, and Process Models. 2. Requirement Engineering: Concepts, Elicitation, Analysis, Specification, Modeling and Validation. 3. Software Design: Concepts, Architectures, and Modeling. 4. Software Quality Engineering: Concepts, and Approaches to Software Testing. 5. Overview of Software Project Management. 6. Software Maintenance and Software Evolution. 
+Practical Requirements : N.A 
+Suggested Instructional Reading Material : Textbooks: 1. Software Engineering: A Practitioner's Approach, Roger S. Pressman & Bruce R. Maxim, McGraw-Hill, 2020. 2. Engineering Software Products: An Introduction to Modern Software Engineering, Ian Sommerville, Pearson Education Limited, 2021. Reference Books: 1. Software Engineering, Ian Sommerville, Pearson Education Limited, 2016. 2. Software Engineering with UML, Bhuyan Unhelkar, CRC Press, 2018. 
+Bottom of Form

@@ -1,0 +1,9 @@
+﻿Top of Form
+
+
+Course Contents Course Code: MTH101 Course Title: Calculus I Credit Hours: 3(3,0) Corequisite(s): Prerequisite(s): 
+Course Learning Outcomes / Course Objectives : At the end of this course the students will be able to use the technology and the rule of four, geometrically, numerically, algebraically, and verbally to focus on conceptual understanding. At the same time, the students will be exposed to the strength of the traditional calculus by the rigor of proofs and by learning the full variety of traditional topics: like limits, continuity, derivative, applications of the derivative, and an introduction to the definite integral. 
+Syllabus / Theory Course Outline : Functions. Types of functions (Algebraic, Trigonometric, Logarithmic, Exponential, Hyperbolic, Inverse trigonometric, Inverse hyperbolic, Implicit). Algebra of functions (Sum, Difference, Product, Quotient, Composition of functions). Parametric equations. Limits and Continuity of functions. The Derivative and its Applications (Rate of change, Chain Rule, Extreme value Theorem, maxima, minima, Mean value Theorem, Optimization Problems and Curve Sketching). Ant derivatives, the definite integral and the Fundamental theorem of calculus. Applications of definite integral (Volume, Arc length, and Surface area). Complex Numbers and their algebra, D'Movires theorem. Extraction of Roots. 
+Practical Requirements : . 
+Suggested Instructional Reading Material : 
+Bottom of Form
