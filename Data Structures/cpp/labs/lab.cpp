@@ -1,0 +1,76 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+typedef struct{
+    int rows;
+    int cols;
+    vector<vector<int>> data;
+} matrix;
+
+void printMatrix(matrix m);
+void multiply(matrix m1 , matrix m2);
+
+int main() {
+    
+    matrix m1;
+    m1.rows = 3;
+    m1.cols = 3;
+    m1.data = {{1,2,3},{4,5,6},{5,6,7}};
+    
+    matrix m2;
+    m2.rows = 3;
+    m2.cols = 3;
+    m2.data = {{1,2,3},{3,4,5},{5,6,7}};
+
+    multiply(m1,m2);
+
+}
+
+void multiply(matrix m1 , matrix m2){
+matrix m3;
+m3.rows = m1.rows;
+m3.cols = m2.cols;
+m3.data.resize(m3.rows, vector<int>(m3.cols, 0));
+if(m1.rows == m2.cols){
+    
+    int num = 0;
+    int m1_row_idx = 0;
+    int m2_row_idx = 0;
+    int m2_col_idx = 0;
+
+    
+    vector<int> arr1 = m1.data[m1_row_idx];
+    vector<int> arr2;
+    for(m2_row_idx ; m2_row_idx < m2.data.size() ; m2_row_idx++){
+    arr2.insert(arr2.end() , m2.data[m2_row_idx][m2_col_idx]);
+    }
+    
+    for(int i = 0 ; i < 3 ; i++){
+        num += arr1[i] * arr2[i];
+    }
+    cout << num << endl;
+} else {
+    cout << "Not feasible." << endl;
+}
+
+
+//printMatrix(m3);
+}
+
+void printMatrix(matrix m){
+    for(int i = 0 ; i < m.rows ; i++){
+        for(int j = 0 ; j < m.cols ; j++){
+            cout << m.data[i][j] << "  ";
+        }
+        cout << endl;
+    }
+}
+
+
+// vector<int> arr1 = m1.data[0];
+//     vector<int> arr2 = {m2.data[0][0] , m2.data[1][0],  m2.data[2][0]};
+//     for(int i = 0 ; i < 3 ; i++){
+//         num += arr1[i] * arr2[i];
+//     }
+//     cout << num << endl;
