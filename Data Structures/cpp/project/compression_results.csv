@@ -1,0 +1,13 @@
+Algorithm,File,Original Size (bytes),Compressed Size (bytes),Compression Ratio (%),Time (ms)
+Huffman,Android_2k.log,277078,186098,32.8355,16
+LZ77,Android_2k.log,277078,245544,11.3809,67
+LZW,Android_2k.log,277078,143296,48.2832,33
+Huffman,commands.txt,134843,90703,32.7344,7
+LZ77,commands.txt,134843,120444,10.6783,37
+LZW,commands.txt,134843,96916,28.1268,14
+Huffman,kennedy.xls,1029744,463303,55.0079,33
+LZ77,kennedy.xls,1029744,486832,52.723,225
+LZW,kennedy.xls,1029744,627916,39.0221,135
+Huffman,widget_demo.cpp,64759,40235,37.8696,3
+LZ77,widget_demo.cpp,64759,64088,1.03615,18
+LZW,widget_demo.cpp,64759,52332,19.1896,5

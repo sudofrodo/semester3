@@ -1,0 +1,257 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-mono); }
+  .root { padding: 1.5rem 0; }
+  .section-label { font-size: 11px; color: var(--color-text-tertiary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+  .input-row { display: flex; gap: 8px; margin-bottom: 1.5rem; }
+  .input-row input { flex: 1; font-family: var(--font-mono); font-size: 14px; }
+  .input-row button { font-family: var(--font-mono); font-size: 13px; white-space: nowrap; }
+  .window-wrap { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 1rem; }
+  .chars { display: flex; flex-wrap: wrap; gap: 3px; margin-bottom: 8px; }
+  .ch { width: 28px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; border-radius: 4px; border: 0.5px solid transparent; transition: background 0.15s, border-color 0.15s; font-family: var(--font-mono); position: relative; }
+  .ch.past { background: var(--color-background-primary); border-color: var(--color-border-tertiary); color: var(--color-text-secondary); }
+  .ch.search { background: #E6F1FB; border-color: #85B7EB; color: #0C447C; }
+  .ch.lookahead { background: #FAEEDA; border-color: #EF9F27; color: #633806; }
+  .ch.match { background: #9FE1CB; border-color: #1D9E75; color: #04342C; }
+  .ch.cursor { background: #EEEDFE; border-color: #7F77DD; color: #26215C; }
+  .ch.future { color: var(--color-text-tertiary); background: transparent; border-color: transparent; }
+  .ch .idx { position: absolute; top: -14px; font-size: 9px; color: var(--color-text-tertiary); }
+  .ch.cursor .idx { color: #7F77DD; font-weight: 500; }
+  .legend { display: flex; gap: 12px; flex-wrap: wrap; }
+  .leg { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--color-text-secondary); }
+  .leg-dot { width: 10px; height: 10px; border-radius: 2px; }
+  .controls { display: flex; gap: 8px; margin-bottom: 1rem; align-items: center; flex-wrap: wrap; }
+  .controls button { font-family: var(--font-mono); font-size: 13px; }
+  .step-info { font-size: 13px; color: var(--color-text-secondary); margin-left: auto; }
+  .token-table { width: 100%; border-collapse: collapse; font-size: 13px; font-family: var(--font-mono); }
+  .token-table th { text-align: left; padding: 6px 10px; font-size: 11px; color: var(--color-text-tertiary); letter-spacing: 0.06em; text-transform: uppercase; border-bottom: 0.5px solid var(--color-border-tertiary); font-weight: 400; }
+  .token-table td { padding: 6px 10px; border-bottom: 0.5px solid var(--color-border-tertiary); color: var(--color-text-primary); }
+  .token-table tr:last-child td { border-bottom: none; }
+  .token-table tr.active-row td { background: var(--color-background-secondary); }
+  .token-table td.mono { font-family: var(--font-mono); }
+  .token-table .new-row td { animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 1rem; }
+  .stat-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 10px 12px; }
+  .stat-val { font-size: 20px; font-weight: 500; color: var(--color-text-primary); font-family: var(--font-mono); }
+  .stat-lbl { font-size: 11px; color: var(--color-text-tertiary); margin-top: 2px; }
+  .msg-box { font-size: 13px; color: var(--color-text-secondary); background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 8px 12px; margin-bottom: 1rem; min-height: 34px; font-family: var(--font-mono); border: 0.5px solid var(--color-border-tertiary); }
+  .done-badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: var(--border-radius-md); background: #EAF3DE; color: #3B6D11; border: 0.5px solid #97C459; }
+  .params { display: flex; gap: 12px; margin-bottom: 1rem; flex-wrap: wrap; align-items: center; }
+  .param-group { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--color-text-secondary); }
+  .param-group input[type=range] { width: 90px; }
+  .param-val { min-width: 20px; font-weight: 500; color: var(--color-text-primary); font-family: var(--font-mono); font-size: 13px; }
+  .table-wrap { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden; }
+  hr { border: none; border-top: 0.5px solid var(--color-border-tertiary); margin: 1.25rem 0; }
+</style>
+
+<div class="root">
+  <h2 class="sr-only">LZ77 compression algorithm step-by-step simulation</h2>
+
+  <div class="input-row">
+    <input type="text" id="txt-input" value="abracadabra" maxlength="60" placeholder="Enter text to compress…" />
+    <button onclick="initSim()">Compress ↗</button>
+  </div>
+
+  <div class="params">
+    <div class="param-group">
+      <span>Search window</span>
+      <input type="range" id="sw" min="4" max="20" value="8" step="1" oninput="document.getElementById('sw-val').textContent=this.value" />
+      <span class="param-val" id="sw-val">8</span>
+    </div>
+    <div class="param-group">
+      <span>Lookahead</span>
+      <input type="range" id="la" min="2" max="10" value="4" step="1" oninput="document.getElementById('la-val').textContent=this.value" />
+      <span class="param-val" id="la-val">4</span>
+    </div>
+  </div>
+
+  <div class="window-wrap">
+    <div class="section-label">sliding window</div>
+    <div class="chars" id="chars"></div>
+    <div style="height:8px"></div>
+    <div class="legend">
+      <div class="leg"><div class="leg-dot" style="background:#85B7EB;border:0.5px solid #378ADD"></div>search buffer</div>
+      <div class="leg"><div class="leg-dot" style="background:#EF9F27;border:0.5px solid #BA7517"></div>lookahead buffer</div>
+      <div class="leg"><div class="leg-dot" style="background:#5DCAA5;border:0.5px solid #1D9E75"></div>match found</div>
+      <div class="leg"><div class="leg-dot" style="background:#7F77DD;border:0.5px solid #534AB7"></div>current position</div>
+    </div>
+  </div>
+
+  <div class="msg-box" id="msg-box">Press "Compress" to start.</div>
+
+  <div class="controls">
+    <button id="btn-prev" onclick="stepBack()">← Prev</button>
+    <button id="btn-next" onclick="stepFwd()">Next →</button>
+    <button id="btn-auto" onclick="toggleAuto()">▶ Auto</button>
+    <button onclick="initSim()" style="margin-left:4px">↺ Reset</button>
+    <span class="step-info" id="step-info">—</span>
+  </div>
+
+  <div class="section-label" style="margin-bottom:8px">output tokens</div>
+  <div class="table-wrap">
+    <table class="token-table">
+      <thead><tr><th>#</th><th>offset</th><th>length</th><th>next char</th><th>decoded</th></tr></thead>
+      <tbody id="token-body"></tbody>
+    </table>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card"><div class="stat-val" id="stat-orig">—</div><div class="stat-lbl">original (chars)</div></div>
+    <div class="stat-card"><div class="stat-val" id="stat-tok">—</div><div class="stat-lbl">tokens emitted</div></div>
+    <div class="stat-card"><div class="stat-val" id="stat-ratio">—</div><div class="stat-lbl">compression ratio</div></div>
+  </div>
+</div>
+
+<script>
+let text = '', steps = [], curStep = -1;
+let swSize = 8, laSize = 4;
+let autoTimer = null;
+
+function buildSteps(t, sw, la) {
+  const res = [];
+  let pos = 0;
+  while (pos < t.length) {
+    const searchStart = Math.max(0, pos - sw);
+    const searchBuf = t.slice(searchStart, pos);
+    const lookahead = t.slice(pos, pos + la);
+    let bestOff = 0, bestLen = 0;
+    for (let l = Math.min(lookahead.length, la); l >= 1; l--) {
+      const pat = lookahead.slice(0, l);
+      const idx = searchBuf.lastIndexOf(pat);
+      if (idx !== -1) { bestOff = searchBuf.length - idx; bestLen = l; break; }
+    }
+    const nextChar = t[pos + bestLen] || '';
+    res.push({ pos, searchStart, sw, la, bestOff, bestLen, nextChar, text: t });
+    pos += bestLen + 1;
+  }
+  return res;
+}
+
+function initSim() {
+  clearInterval(autoTimer); autoTimer = null;
+  document.getElementById('btn-auto').textContent = '▶ Auto';
+  text = document.getElementById('txt-input').value.trim();
+  if (!text) return;
+  swSize = parseInt(document.getElementById('sw').value);
+  laSize = parseInt(document.getElementById('la').value);
+  steps = buildSteps(text, swSize, laSize);
+  curStep = -1;
+  document.getElementById('token-body').innerHTML = '';
+  document.getElementById('stat-orig').textContent = text.length;
+  document.getElementById('stat-tok').textContent = '0';
+  document.getElementById('stat-ratio').textContent = '—';
+  document.getElementById('step-info').textContent = 'step 0 / ' + steps.length;
+  document.getElementById('msg-box').textContent = 'Ready. Press "Next" to step through compression.';
+  renderChars(-1);
+}
+
+function renderChars(si) {
+  const container = document.getElementById('chars');
+  container.innerHTML = '';
+  if (!text) return;
+  const s = si >= 0 ? steps[si] : null;
+  for (let i = 0; i < text.length; i++) {
+    const el = document.createElement('div');
+    el.className = 'ch';
+    const idx = document.createElement('span');
+    idx.className = 'idx';
+    idx.textContent = i;
+    el.appendChild(idx);
+    el.appendChild(document.createTextNode(text[i]));
+    if (!s) { el.classList.add(i === 0 ? 'cursor' : 'future'); }
+    else {
+      const { pos, searchStart, bestOff, bestLen } = s;
+      const matchStart = pos - bestOff;
+      if (i < searchStart) el.classList.add('past');
+      else if (i >= searchStart && i < pos) {
+        if (bestLen > 0 && i >= matchStart && i < matchStart + bestLen) el.classList.add('match');
+        else el.classList.add('search');
+      } else if (i === pos) el.classList.add('cursor');
+      else if (i > pos && i < pos + s.la) {
+        if (bestLen > 0 && i > pos && i < pos + bestLen) el.classList.add('match');
+        else el.classList.add('lookahead');
+      } else if (i >= pos + s.la) el.classList.add('future');
+    }
+    container.appendChild(el);
+  }
+}
+
+function renderMsg(si) {
+  const s = steps[si];
+  let msg;
+  if (s.bestLen > 0) {
+    const matchedText = text.slice(s.pos, s.pos + s.bestLen);
+    msg = `Position ${s.pos}: found match "${matchedText}" at offset ${s.bestOff}, length ${s.bestLen}. Next char: "${s.nextChar || 'EOF'}". Token → (${s.bestOff}, ${s.bestLen}, "${s.nextChar || '∅'}")`;
+  } else {
+    msg = `Position ${s.pos}: no match in search buffer. Literal char: "${text[s.pos]}". Token → (0, 0, "${text[s.pos]}")`;
+  }
+  document.getElementById('msg-box').textContent = msg;
+}
+
+function appendToken(si, isNew) {
+  const s = steps[si];
+  const decoded = text.slice(s.pos, s.pos + s.bestLen + (s.nextChar ? 1 : 0));
+  const tbody = document.getElementById('token-body');
+  const tr = document.createElement('tr');
+  if (isNew) tr.className = 'new-row';
+  tr.dataset.step = si;
+  tr.innerHTML = `<td>${si + 1}</td><td>${s.bestOff}</td><td>${s.bestLen}</td><td>${s.nextChar || '∅'}</td><td style="color:var(--color-text-secondary)">${decoded}</td>`;
+  tbody.appendChild(tr);
+  tr.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function highlightRow(si) {
+  document.querySelectorAll('#token-body tr').forEach(r => r.classList.remove('active-row'));
+  const row = document.querySelector(`#token-body tr[data-step="${si}"]`);
+  if (row) row.classList.add('active-row');
+}
+
+function updateStats(si) {
+  const count = si + 1;
+  document.getElementById('stat-tok').textContent = count;
+  const ratio = (count / text.length * 100).toFixed(0) + '%';
+  document.getElementById('stat-ratio').textContent = ratio;
+}
+
+function stepFwd() {
+  if (!steps.length) return;
+  if (curStep >= steps.length - 1) {
+    document.getElementById('msg-box').innerHTML = 'Compression complete! <span class="done-badge">done</span>';
+    clearInterval(autoTimer); autoTimer = null;
+    document.getElementById('btn-auto').textContent = '▶ Auto';
+    return;
+  }
+  curStep++;
+  renderChars(curStep);
+  renderMsg(curStep);
+  appendToken(curStep, true);
+  highlightRow(curStep);
+  updateStats(curStep);
+  document.getElementById('step-info').textContent = 'step ' + (curStep + 1) + ' / ' + steps.length;
+}
+
+function stepBack() {
+  if (curStep <= 0) { curStep = -1; initSim(); return; }
+  curStep--;
+  const tbody = document.getElementById('token-body');
+  if (tbody.lastChild) tbody.removeChild(tbody.lastChild);
+  renderChars(curStep);
+  renderMsg(curStep);
+  highlightRow(curStep);
+  updateStats(curStep);
+  document.getElementById('step-info').textContent = 'step ' + (curStep + 1) + ' / ' + steps.length;
+}
+
+function toggleAuto() {
+  if (autoTimer) { clearInterval(autoTimer); autoTimer = null; document.getElementById('btn-auto').textContent = '▶ Auto'; return; }
+  document.getElementById('btn-auto').textContent = '⏸ Pause';
+  autoTimer = setInterval(() => {
+    if (curStep >= steps.length - 1) { clearInterval(autoTimer); autoTimer = null; document.getElementById('btn-auto').textContent = '▶ Auto'; stepFwd(); return; }
+    stepFwd();
+  }, 700);
+}
+
+initSim();
+</script>

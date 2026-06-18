@@ -1,0 +1,57 @@
+brackets:
+-for every character
+-if its opening bracket , match its companion and push to stack
+-if its closing bracket , pop from the stack
+	- if popped does not equal the one incoming
+		expression is invalid 
+	- if it does 
+		just pop
+
+-check if stack is empty
+	if not expression is also invalid
+
+
+postfix conversion:
+-make a priorit function
+-func which checks open and closing bracket
+-for every character
+-if its alphabet or digit
+	simply push to ret string
+-if its opening bracket
+	then push to stack
+-if its closing bracket
+	pop until stack is not empty and we find a opening bracket
+-else
+	-if its power symbol
+	           simply push to stack
+	-else
+		pop and push to ret , while stack is not empty and priority of top is greater or equal
+		to priority of current character
+	after that just push the symbol to stack as it have find its right place
+-in the end , pop all remaining elements from stack until its empty
+
+postfix evaluation:
+-make a function which performs actual arithmetic
+-for every character
+-if its digit
+	 simply push to stack , as characters are treated as characters not integers , we must 
+	first convert them to integer by subtracting from 0 char
+-else
+	pop 2 elements from stack
+	supply operands and operator to arithmetic function , swapped
+	push the result to stack
+-returned the popped val
+
+sorting through stacks:
+-make two stacks original and auxiliary , auxiliary's top is lowest value , will push auxiliary to 
+original , that will make it sorted in ascending
+-till the original is not empty
+	pop an element from og
+	//the goal here is to put numbers at their right depth
+	if a number is greater than peek at auxiliary , it needs to go down in auxiliary
+		so we pop the elements from stack and push them back to og , do this until
+		auxiliary peek is less than temp
+	now that element is at its right depth
+		just push it to stack now
+-at the end , just empty the auxiliary to original
+-return original
