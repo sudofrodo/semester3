@@ -10,5 +10,5 @@ This is what all I received and did in Third Semester (Spring 2026) at COMSATS L
 - Fundamentals of Digital Logic Design: Sir Ali Raza
 - Data Structures: Mam Humera Faisal
 - Calculus and Analytical Geometry: Dr Kamran Siddiqui
-- Statistics and Probability Theory: Man Nausheen Amjad
+- Statistics and Probability Theory: Mam Nausheen Amjad
 - Introduction to Enterpreneurship: Sir Jaffar Mehmood Butt
